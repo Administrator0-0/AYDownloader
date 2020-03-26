@@ -25,9 +25,16 @@ class ThreadPool {
         }
     };
 
+    private ThreadPool(){
+
+    }
+
     static ThreadPool getInstance() {
         if (instance == null){
-            instance = new ThreadPool();
+            synchronized (ThreadPool.class) {
+                if (instance == null)
+                    instance = new ThreadPool();
+            }
         }
         return instance;
     }

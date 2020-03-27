@@ -51,14 +51,20 @@ class ThreadPool {
         this.MAX_ALIVE_TIME = MAX_ALIVE_TIME <= 0 ? DEFAULT_MAX_ALIVE_TIME : MAX_ALIVE_TIME;
     }
 
-    ThreadPoolExecutor initThreadPool(){
-        if (mExecutor == null){
+    void initExecutor() {
+        if (mExecutor == null) {
             mExecutor = new ThreadPoolExecutor(CORE_POOL_SIZE,
                     MAX_POOL_SIZE,
                     MAX_ALIVE_TIME,
                     TimeUnit.SECONDS,
                     new LinkedBlockingDeque<Runnable>(),
                     mThreadFactory);
+        }
+    }
+
+    ThreadPoolExecutor getExecutor(){
+        if (mExecutor == null){
+            initExecutor();
         }
         return mExecutor;
     }

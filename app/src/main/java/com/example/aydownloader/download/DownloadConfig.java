@@ -5,7 +5,7 @@ public class DownloadConfig {
     int corePoolSize;
     int maxPoolSize;
     int maxAliveTime;
-    boolean isMutilThread;
+    boolean isMultipleThread;
 
 
     public DownloadConfig setThreadPool(int corePoolSize, int maxPoolSize){
@@ -25,8 +25,8 @@ public class DownloadConfig {
         return this;
     }
 
-    public DownloadConfig setMutilThread(boolean mutilThread) {
-        this.isMutilThread = mutilThread;
+    public DownloadConfig setMultipleThread(boolean multipleThread) {
+        this.isMultipleThread = multipleThread;
         return this;
     }
 }

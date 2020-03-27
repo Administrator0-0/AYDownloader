@@ -1,51 +1,88 @@
 package com.example.aydownloader.download;
 
+
+import android.content.Context;
+
+import com.example.aydownloader.callback.DownloadListener;
+import com.example.aydownloader.callback.DownloadTaskListener;
+import com.example.aydownloader.util.TaskKeyUtil;
 import java.util.HashMap;
 
 class DownloaderManager {
     private static DownloaderManager instance = null;
+    private Context mContext;
     private HashMap<String, DownloadTaskInfo> infoMap = new HashMap<>();
+    private HashMap<String, DownloadTaskHandler> handlerMap = new HashMap<>();
     private DownloadConfig mConfig;
+    private DownloadListener mListener;
 
-    private DownloaderManager(){
-
+    private DownloaderManager(Context context){
+        this.mContext = context;
     }
 
-    static DownloaderManager getInstance() {
+    static DownloaderManager getInstance(Context context) {
         if (instance == null){
             synchronized (DownloaderManager.class) {
                 if (instance == null)
-                    instance = new DownloaderManager();
+                    instance = new DownloaderManager(context.getApplicationContext());
             }
         }
         return instance;
     }
 
-    void put(String url, String path, String name, int threadCount){
+    void put(String url, String path, String name, int threadCount, DownloadTaskListener callback){
         DownloadTaskInfo info = new DownloadTaskInfo(url, path, name, threadCount);
-        getInstance().infoMap.put(info.getKey(), info);
+        infoMap.put(info.getKey(), info);
     }
 
     private DownloaderManager setConfig(DownloadConfig config){
-        getInstance().mConfig = config;
-        init();
+        mConfig = config;
+        initThreadPool();
         return instance;
     }
 
-    private void init() {
-        ThreadPool.getInstance().setCORE_POOL_SIZE(getInstance().mConfig.corePoolSize);
-        ThreadPool.getInstance().setMAX_POOL_SIZE(getInstance().mConfig.maxPoolSize);
-        ThreadPool.getInstance().setMAX_ALIVE_TIME(getInstance().mConfig.maxAliveTime);
+    private void initThreadPool() {
+        if (mConfig == null) mConfig = new DownloadConfig();
+        ThreadPool.getInstance().setCORE_POOL_SIZE(mConfig.corePoolSize);
+        ThreadPool.getInstance().setMAX_POOL_SIZE(mConfig.maxPoolSize);
+        ThreadPool.getInstance().setMAX_ALIVE_TIME(mConfig.maxAliveTime);
+    }
+
+    public void startAll(){
+        //TODO 全部开始
+    }
+
+    public void start(String url, String path, String name) throws Exception {
+        String key = TaskKeyUtil.getKey(url, path, name);
+        start(key);
+    }
+
+    private void  start(String key) throws Exception {
+        mListener.onStart();
+        if (!infoMap.containsKey(key)) {
+            if (mListener != null){
+                mListener.onFailure();
+                return;
+            }else {
+                throw new Exception("Download task is not exist");
+            }
+        }
+        execute(infoMap.get(key));
     }
 
 
-
-    public DownloaderManager start(){
-
+    public DownloaderManager registerListener(DownloadListener listener){
+        mListener = listener;
         return instance;
     }
 
-    public DownloaderManager registerListener(){
-        return instance;
+    private synchronized void execute(DownloadTaskInfo info){
+        ThreadPool.getInstance().initExecutor();
+        DownloadTaskHandler handler = new DownloadTaskHandler(mContext, info);
+        DownloadTask task = new DownloadTask(mContext, info, handler.getHandler());
+        if (ThreadPool.getInstance().getExecutor().getActiveCount() ==
+                ThreadPool.getInstance().getExecutor().getCorePoolSize()){
+            info.getCallback().onWait();
+        }
     }
 }

@@ -1,53 +1,36 @@
 package com.example.aydownloader.download;
 
+import android.content.Context;
+
+import com.example.aydownloader.callback.DownloadTaskListener;
+
 public class DownloadLoader {
-    private String url;
-    private String path;
-    private String name;
-    private int threadCount;
 
-    public DownloadLoader(){
+    private Context mContext;
 
+    private DownloadLoader(Context context){
+        mContext = context;
     }
 
-    public String getUrl() {
-        return url;
+    public DownloadLoader load(String url, String path, String name){
+        return load(url, path, name, 1);
     }
 
-    public int getThreadCount() {
-        return threadCount;
+    public DownloadLoader load(String url, String path, String name, DownloadTaskListener callback){
+        return load(url, path, name, 1, callback);
     }
 
-    public String getName() {
-        return name;
+    public DownloadLoader load(String url, String path, String name, int threadCount){
+        return load(url, path, name, threadCount, null);
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public DownloadLoader setUrl(String url) {
-        this.url = url;
-        return this;
-    }
-
-    public DownloadLoader setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public DownloadLoader setPath(String path) {
-        this.path = path;
-        return this;
-    }
-
-    public DownloadLoader setThreadCount(int threadCount) {
-        this.threadCount = threadCount;
+    public DownloadLoader load(String url, String path, String name, int threadCount,
+                               DownloadTaskListener callback){
+        DownloaderManager.getInstance(mContext).put(url, path, name, threadCount, callback);
         return this;
     }
 
     public DownloaderManager build(){
-        DownloaderManager.getInstance().put(url, path, name, threadCount);
-        return DownloaderManager.getInstance();
+        return DownloaderManager.getInstance(mContext);
     }
 }

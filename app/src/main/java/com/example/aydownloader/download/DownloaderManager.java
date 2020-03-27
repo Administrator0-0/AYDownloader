@@ -35,6 +35,10 @@ class DownloaderManager {
         infoMap.put(info.getKey(), info);
     }
 
+    void put(DownloadTaskInfo info){
+        infoMap.put(info.getKey(), info);
+    }
+
     private DownloaderManager setConfig(DownloadConfig config){
         mConfig = config;
         initThreadPool();
@@ -50,6 +54,10 @@ class DownloaderManager {
 
     public void startAll(){
         //TODO 全部开始
+    }
+
+    public void start(DownloadTaskInfo info) throws Exception {
+        start(info.getKey());
     }
 
     public void start(String url, String path, String name) throws Exception {
@@ -80,6 +88,7 @@ class DownloaderManager {
         ThreadPool.getInstance().initExecutor();
         DownloadTaskHandler handler = new DownloadTaskHandler(mContext, info);
         DownloadTask task = new DownloadTask(mContext, info, handler.getHandler());
+        ThreadPool.getInstance().getExecutor().execute(task);
         if (ThreadPool.getInstance().getExecutor().getActiveCount() ==
                 ThreadPool.getInstance().getExecutor().getCorePoolSize()){
             info.getCallback().onWait();

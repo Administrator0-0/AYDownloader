@@ -30,6 +30,11 @@ public class DownloadLoader {
         return this;
     }
 
+    public DownloadLoader load(DownloadTaskInfo info){
+        DownloaderManager.getInstance(mContext).put(info);
+        return this;
+    }
+
     public DownloaderManager build(){
         return DownloaderManager.getInstance(mContext);
     }

@@ -4,6 +4,7 @@ public interface DownloadListener {
 
     void onStart();
     void onDownloading();
-    void onSuccess();
-    void onFailure();
+    void onPause();
+    void onFinish();
+    void onError();
 }

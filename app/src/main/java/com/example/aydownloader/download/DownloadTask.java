@@ -3,12 +3,18 @@ package com.example.aydownloader.download;
 import android.content.Context;
 import android.os.Handler;
 
+import static com.example.aydownloader.download.DownloadStatus.CANCEL;
+import static com.example.aydownloader.download.DownloadStatus.PAUSE;
+import static com.example.aydownloader.download.DownloadStatus.RESTART;
+import static com.example.aydownloader.download.DownloadStatus.RESUME;
+
 
 public class DownloadTask implements Runnable{
 
     private Context mContext;
     private DownloadTaskInfo mInfo;
     private Handler mHandler;
+    private int mStatus;
 
     DownloadTask(Context context, DownloadTaskInfo info, Handler handler){
         this.mContext = context;
@@ -19,5 +25,21 @@ public class DownloadTask implements Runnable{
     @Override
     public void run() {
         //TODO 网络逻辑
+    }
+
+    void pause(){
+        mStatus = PAUSE;
+    }
+
+    void cancel(){
+        mStatus = CANCEL;
+    }
+
+    void resume(){
+        mStatus = RESUME;
+    }
+
+    void restart(){
+        mStatus = RESTART;
     }
 }

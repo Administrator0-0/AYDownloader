@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.example.aydownloader.callback.DownloadListener;
 import com.example.aydownloader.callback.DownloadTaskListener;
-import com.example.aydownloader.util.TaskKeyUtil;
+import com.example.aydownloader.util.TaskUtil;
 import java.util.HashMap;
 
 class DownloaderManager {
@@ -61,7 +61,7 @@ class DownloaderManager {
     }
 
     public void start(String url, String path, String name) throws Exception {
-        String key = TaskKeyUtil.getKey(url, path, name);
+        String key = TaskUtil.getKey(url, path, name);
         start(key);
     }
 
@@ -69,7 +69,7 @@ class DownloaderManager {
         mListener.onStart();
         if (!infoMap.containsKey(key)) {
             if (mListener != null){
-                mListener.onFailure();
+                mListener.onError();
                 return;
             }else {
                 throw new Exception("Download task is not exist");
@@ -78,16 +78,46 @@ class DownloaderManager {
         execute(infoMap.get(key));
     }
 
+    public void pauseAll(){
+        //TODO 暂停全部
+    }
+
+    public void pause(DownloadTaskInfo info) throws Exception {
+        pause(info.getKey());
+    }
+
+    public void pause(String url, String path, String name) throws Exception {
+        String key = TaskUtil.getKey(url, path, name);
+        pause(key);
+    }
+
+    private void pause(String key) throws Exception {
+        mListener.onStart();
+        if (!handlerMap.containsKey(key)) {
+            if (mListener != null){
+                mListener.onError();
+                return;
+            }else {
+                throw new Exception("Download task is not exist");
+            }
+        }
+        handlerMap.get(key).pause();
+    }
+
 
     public DownloaderManager registerListener(DownloadListener listener){
         mListener = listener;
         return instance;
     }
 
+
+
     private synchronized void execute(DownloadTaskInfo info){
         ThreadPool.getInstance().initExecutor();
         DownloadTaskHandler handler = new DownloadTaskHandler(mContext, info);
         DownloadTask task = new DownloadTask(mContext, info, handler.getHandler());
+        handler.setTask(task);
+        handlerMap.put(info.getKey(), handler);
         ThreadPool.getInstance().getExecutor().execute(task);
         if (ThreadPool.getInstance().getExecutor().getActiveCount() ==
                 ThreadPool.getInstance().getExecutor().getCorePoolSize()){

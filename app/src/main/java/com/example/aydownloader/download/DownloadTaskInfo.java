@@ -1,7 +1,7 @@
 package com.example.aydownloader.download;
 
 import com.example.aydownloader.callback.DownloadTaskListener;
-import com.example.aydownloader.util.TaskKeyUtil;
+import com.example.aydownloader.util.TaskUtil;
 
 class DownloadTaskInfo {
 
@@ -25,11 +25,27 @@ class DownloadTaskInfo {
         this.name = name;
         this.threadCount = threadCount;
         this.callback = callback;
-        this.key = TaskKeyUtil.getKey(url, path, name);
+        this.key = TaskUtil.getKey(url, path, name);
     }
 
     String getKey() {
         return key;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public int getThreadCount() {
+        return threadCount;
     }
 
     DownloadTaskListener getCallback(){

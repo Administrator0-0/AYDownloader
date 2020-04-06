@@ -27,6 +27,18 @@ public class DownloadTask implements Runnable{
         //TODO 网络逻辑
     }
 
+    public String getUrl() {
+        return mInfo.getUrl();
+    }
+
+    public String getPath(){
+        return mInfo.getPath();
+    }
+
+    public String getName(){
+        return mInfo.getName();
+    }
+
     void pause(){
         mStatus = PAUSE;
     }

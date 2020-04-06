@@ -1,0 +1,40 @@
+package com.example.aydownloader.db;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+
+public class DBHelper extends SQLiteOpenHelper {
+
+    public static final String CREATE_DOWNLOAD_INFO = "create table download_info ("
+            + "id integer primary key autoincrement, "
+            + "url text, "
+            + "path text, "
+            + "name text, "
+            + "child_task_count integer, "
+            + "current_length integer, "
+            + "total_length integer, "
+            + "percentage real, "
+            + "status integer, "
+            + "last_modify text, "
+            + "date text)";
+
+
+    public DBHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_DOWNLOAD_INFO);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion == 1) {
+            db.execSQL("alter table download_info add column status integer");
+        }
+    }
+}

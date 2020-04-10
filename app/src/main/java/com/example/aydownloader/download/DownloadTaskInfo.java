@@ -23,7 +23,6 @@ public class DownloadTaskInfo implements Parcelable{
     private long date;
     private String lastModify;
     private int threadCount;
-    private DownloadTaskListener callback;
 
     public DownloadTaskInfo(){
 
@@ -32,16 +31,12 @@ public class DownloadTaskInfo implements Parcelable{
     DownloadTaskInfo(String url, String path, String name){
         this(url, path, name, 1);
     }
+
     DownloadTaskInfo(String url, String path, String name, int threadCount){
-        this(url, path, name, threadCount, null);
-    }
-    DownloadTaskInfo(String url, String path, String name, int threadCount,
-                     DownloadTaskListener callback){
         this.url = url;
         this.path = path;
         this.name = name;
         this.threadCount = threadCount;
-        this.callback = callback;
         this.key = TaskUtil.getKey(url, path, name);
     }
 
@@ -52,7 +47,6 @@ public class DownloadTaskInfo implements Parcelable{
         this.path = path;
         this.name = name;
         this.threadCount = threadCount;
-        this.callback = callback;
         this.key = TaskUtil.getKey(url, path, name);
         this.currentLength = currentLength;
         this.totalLength = totalLength;
@@ -194,9 +188,6 @@ public class DownloadTaskInfo implements Parcelable{
         this.url = url;
     }
 
-    DownloadTaskListener getCallback(){
-        return callback;
-    }
 
     @Override
     public int describeContents() {

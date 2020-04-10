@@ -119,9 +119,9 @@ class DownloaderManager {
         handler.setTask(task);
         handlerMap.put(info.getKey(), handler);
         ThreadPool.getInstance().getExecutor().execute(task);
-        if (ThreadPool.getInstance().getExecutor().getActiveCount() ==
-                ThreadPool.getInstance().getExecutor().getCorePoolSize()){
-            info.getCallback().onWait();
-        }
+//        if (ThreadPool.getInstance().getExecutor().getActiveCount() ==
+//                ThreadPool.getInstance().getExecutor().getCorePoolSize()){
+//            info.getCallback().onWait();
+//        }
     }
 }

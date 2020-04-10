@@ -41,7 +41,6 @@ class DownloadTaskHandler {
         this.path = info.getPath();
         this.name = info.getName();
         this.threadCount = info.getThreadCount();
-        this.callback = info.getCallback();
         mHandler = new TaskHandler();
     }
 
